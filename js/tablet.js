@@ -3,61 +3,70 @@ document.addEventListener('DOMContentLoaded', function () {
     const steps = document.querySelectorAll('.step');
     const nextButtons = document.querySelectorAll('.step .btn');
 
-    nextButtons.forEach((btn, index) => {
+    nextButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
             const currentStep = document.querySelector('.step.is-active');
-            currentStep.classList.remove('is-active');
-
-            const isRestart = btn.classList.contains('btn--restart');
-
-            let nextIndex;
-            if (isRestart) {
-                nextIndex = 0;
-
-                circleButtons.forEach(b => b.classList.remove('is-active'));
-                localStorage.removeItem('activeCircleButtons');
-            } else {
-                const currentIndex = Array.from(steps).indexOf(currentStep);
-                nextIndex = currentIndex + 1;
-            }
+            const currentIndex = Array.from(steps).indexOf(currentStep);
+            const nextIndex = currentIndex + 1;
 
             if (steps[nextIndex]) {
+                currentStep.classList.remove('is-active');
                 steps[nextIndex].classList.add('is-active');
+            }
+        });
+    });
 
-                // автопереход с step--3
-                if (steps[nextIndex].classList.contains('step--3')) {
-                    setTimeout(() => {
-                        steps[nextIndex].classList.remove('is-active');
-                        if (steps[nextIndex + 1]) {
-                            steps[nextIndex + 1].classList.add('is-active');
-                        }
-                    }, 3000);
+    const input = document.querySelector('.code__input');
+    const keyboard = document.querySelector('.keyboard');
+    const keys = keyboard.querySelectorAll('.key');
+    const maxLength = 4;
+
+    input.addEventListener('click', () => {
+        keyboard.classList.remove('is-hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!keyboard.contains(e.target) && e.target !== input) {
+            keyboard.classList.add('is-hidden');
+        }
+    });
+
+    keys.forEach(key => {
+        key.addEventListener('click', () => {
+            const value = key.textContent;
+
+            if (key.classList.contains('key--backspace')) {
+                input.value = input.value.slice(0, -1);
+            } else if (key.classList.contains('key--submit')) {
+                keyboard.classList.add('is-hidden');
+
+                const currentStep = document.querySelector('.step.is-active');
+                const stepsArray = Array.from(document.querySelectorAll('.step'));
+                const currentIndex = stepsArray.indexOf(currentStep);
+
+                if (input.value.length < maxLength) {
+                    const lockedStep = document.querySelector('.step--locked');
+                    if (lockedStep) {
+                        currentStep.classList.remove('is-active');
+                        lockedStep.classList.add('is-active');
+                    }
+                } else {
+                    const nextStep = stepsArray[currentIndex + 1];
+                    if (nextStep) {
+                        currentStep.classList.remove('is-active');
+                        nextStep.classList.add('is-active');
+                    }
+                }
+            } else {
+                if (input.value.length < maxLength) {
+                    input.value += value;
                 }
             }
         });
     });
 
-    // toggle logic for logo
-    const circleButtons = document.querySelectorAll('.step__circle-button');
-
-    circleButtons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            btn.classList.toggle('is-active');
-
-            // save active to localStorage
-            const activeIndexes = Array.from(circleButtons)
-                .map((b, i) => b.classList.contains('is-active') ? i : null)
-                .filter(i => i !== null);
-
-            localStorage.setItem('activeCircleButtons', JSON.stringify(activeIndexes));
-        });
+    input.addEventListener('input', () => {
+        const value = input.value.padEnd(4, 'X');
+        input.setAttribute('placeholder', value);
     });
-
-    // state from localStorage
-    // const saved = JSON.parse(localStorage.getItem('activeCircleButtons') || '[]');
-    // saved.forEach(i => {
-    //     if (circleButtons[i]) {
-    //         circleButtons[i].classList.add('is-active');
-    //     }
-    // });
 });
