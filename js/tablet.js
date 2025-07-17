@@ -82,10 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const nextStep = document.querySelector('.step--4');
             const label = btn.textContent.trim();
 
-            // скрыть все блоки контента
             Object.values(contentBlocks).forEach(block => block.classList.remove('is-active'));
 
-            // показать нужный блок
             if (label.includes('Маркета')) {
                 contentBlocks.market.classList.add('is-active');
             } else if (label.includes('Лавки')) {
