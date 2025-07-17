@@ -72,6 +72,10 @@ body {
     line-height: 1;
 }
 
+.title--big {
+    font-size: 80px;
+}
+
 .subheading {
     font-size: 40px;
 }
@@ -467,6 +471,15 @@ body {
 
 .location {
     text-align: center;
+    margin-top: 60px;
+}
+
+.step--6 .title, .step--locked .title, .step--failed .title {
+    margin-bottom: 0;
+}
+
+.step--6 .subheading, .step--locked .subheading, .step--failed .subheading {
+    margin-top: 20px;
 }
 
 @media (max-width: 380px) {
